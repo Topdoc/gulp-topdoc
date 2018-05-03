@@ -6,30 +6,35 @@ import topdoc from 'postcss-topdoc';
 // consts
 const PLUGIN_NAME = 'gulp-topdoc';
 
-// plugin level function (dealing with files)
-export default function gulpTopdoc() {
-  return through.obj((file, enc, cb) => {
+export default function gulpTopdoc(opts) {
+  const stream = through.obj((file, enc, cb) => {
     if (file.isStream()) {
       return cb(new PluginError(PLUGIN_NAME, 'Streaming not supported'));
     }
-    if (file.isBuffer()) {
-      try {
-        postcss([topdoc({
-            fileData: {
-              sourcePath: './test/fixtures/button.css',
-            },
-          })])
-          .process(file.contents, {
-            from: './test/fixtures/button.css'
-          })
-          .then((result) => {
-            console.log(result);
-          });
-        console.log(file.contents);
-      } catch (e) {
-        return cb(new PluginError(PLUGIN_NAME, e));
-      }
-    }
-    cb(null, file);
+    return postcss(topdoc(opts))
+      .process(file.contents, {
+        from: file.path
+      })
+      .then((result) => {
+        file.topdoc = result.topdoc;
+        stream.push(file);
+        return cb();
+      })
+      .catch(error => {
+        const errorOptions = {
+          fileName: file.path,
+          showStack: true
+        }
+        errorOptions.error = error
+        errorOptions.fileName = error.file || file.path
+        errorOptions.lineNumber = error.line
+        errorOptions.showProperties = false
+        errorOptions.showStack = false
+        error.message + '\n\n' + error.showSourceCode() + '\n'
+        setImmediate(function() {
+          cb(new PluginError(PLUGIN_NAME, error, errorOptions))
+        })
+      });
   });
+  return stream;
 }
