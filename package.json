@@ -1,0 +1,62 @@
+{
+  "name": "gulp-topdoc",
+  "version": "0.1.0",
+  "description": "A Gulp extension to parse Topdoc data from CSS files and generate styleguides",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "npm run compile",
+    "compile": "babel -d ./ ./src/",
+    "test": "nyc ava",
+    "lint": "eslint .",
+    "report-coverage": "nyc report -r lcovonly && codecov",
+    "validate": "npm run lint && npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Topdoc/gulp-topdoc.git"
+  },
+  "keywords": [
+    "gulp",
+    "topdoc",
+    "styleguide",
+    "gulpplugin"
+  ],
+  "author": "Garth Braithwaite <garthdb@gmail.com> (http://garthdb.com)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Topdoc/gulp-topdoc/issues"
+  },
+  "nyc": {
+    "include": [
+      "src/*.js"
+    ],
+    "require": [
+      "babel-register"
+    ]
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ]
+  },
+  "homepage": "https://github.com/Topdoc/gulp-topdoc#readme",
+  "dependencies": {
+    "plugin-error": "^1.0.1",
+    "postcss": "^6.0.21",
+    "postcss-topdoc": "^0.1.2",
+    "through2": "^2.0.3"
+  },
+  "devDependencies": {
+    "ava": "^0.21.0",
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.25.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-env": "^1.6.0",
+    "babel-register": "^6.24.1",
+    "codecov": "^3.0.0",
+    "eslint": "^4.19.1",
+    "gulp": "^3.9.1",
+    "nyc": "^11.7.1",
+    "vinyl": "^2.1.0"
+  }
+}
