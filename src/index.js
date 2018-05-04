@@ -3,7 +3,6 @@ import PluginError from 'plugin-error';
 import postcss from 'postcss';
 import topdoc from 'postcss-topdoc';
 
-// consts
 const PLUGIN_NAME = 'gulp-topdoc';
 
 export default function gulpTopdoc(opts) {
@@ -25,15 +24,15 @@ export default function gulpTopdoc(opts) {
           fileName: file.path,
           showStack: true
         }
-        errorOptions.error = error
-        errorOptions.fileName = error.file || file.path
-        errorOptions.lineNumber = error.line
-        errorOptions.showProperties = false
-        errorOptions.showStack = false
-        error.message + '\n\n' + error.showSourceCode() + '\n'
-        setImmediate(function() {
-          cb(new PluginError(PLUGIN_NAME, error, errorOptions))
-        })
+        if (error.name === 'CssSyntaxError') {
+          errorOptions.error = error
+          errorOptions.fileName = error.file || file.path
+          errorOptions.lineNumber = error.line
+          errorOptions.showProperties = false
+          errorOptions.showStack = false
+          error.message + '\n\n' + error.showSourceCode() + '\n'
+        }
+        cb(new PluginError(PLUGIN_NAME, error, errorOptions))
       });
   });
   return stream;
